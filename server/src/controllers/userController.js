@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const { isValid, isValidObjectId, isValidFullName, isValidEmail, isValidPhone, isValidPassword, } = require("../utils/validator");
-const userModel = require("../models/userModel");
+
 
 //signup user
 const signupUser = async (req, res) => {
@@ -32,7 +32,7 @@ const signupUser = async (req, res) => {
             return res.status(400).json({ msg: "Invalid Email" })
         }
 
-        let duplicateEmail = await userModel.findOne({ email });
+        let duplicateEmail = await UserModel.findOne({ email });
 
         if (duplicateEmail) {
             return res.status(401).json({ msg: "Email is Exist already" })

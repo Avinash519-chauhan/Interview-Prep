@@ -10,7 +10,9 @@ const {
     getAllUsers,
     deleteUser,
 } = require("../controllers/userController");
-const { authentication, authorization } = require("../middlewares/auth");
+
+
+const { authentication, authorization } = require("../middleware/auth");
 
 router.post("/signup", signupUser);
 router.post("/login", loginUser);

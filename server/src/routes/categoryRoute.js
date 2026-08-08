@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { authentication, authorization } = require("../middlewares/auth");
+const { authentication, authorization } = require("../middleware/auth");
 
 const {
   addCategory,
