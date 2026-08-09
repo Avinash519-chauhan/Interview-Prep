@@ -19,7 +19,7 @@ const signupUser = async (req, res) => {
             return res.status(400).json({ msg: "Full Name is Required" })
         }
 
-        if (fullName.length > 2 || !isValidFullName(fullName)) {
+        if (!isValidFullName(fullName)) {
             return res.status(400).json({ msg: "Invalid Full Name" })
         }
 
@@ -28,7 +28,7 @@ const signupUser = async (req, res) => {
             return res.status(400).json({ msg: "Email is Required" })
         }
 
-        if (!isValidEmail(emial)) {
+        if (!isValidEmail(email)) {
             return res.status(400).json({ msg: "Invalid Email" })
         }
 
@@ -86,7 +86,8 @@ const signupUser = async (req, res) => {
         return res.status(201).json({ msg: "Signup Successfully Done", userAdded });
 
     } catch (error) {
-        return res.status(500).json({ msg: "Internal Server Error" })
+        console.log(error);
+        return res.status(500).json({msg: "Internal Server Error" })
     }
 }
 
