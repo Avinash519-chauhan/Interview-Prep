@@ -118,7 +118,7 @@ const getInterviewById = async (req, res) => {
 // Update Interview (Admin)
 const updateInterview = async (req, res) => {
   try {
-    let interviewId = req.prams.id;
+    let interviewId = req.params.id;
     if (!isValidObjectId(interviewId)) {
       return res.status(400).json({ msg: "Invalid Interview Id" });
     }
