@@ -67,7 +67,11 @@ const generateQuestions = async (req, res) => {
         });
 
         let result = response.text;
-        console.log(result);
+        let questions = JSON.parse(result);
+
+    return res
+      .status(201)
+      .json({ msg: "Interview Questions Generated", questions });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ msg: "Internal Server Error" });
