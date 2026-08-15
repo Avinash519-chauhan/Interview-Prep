@@ -81,13 +81,18 @@ const signupUser = async (req, res) => {
         let hashedPassword = await bcrypt.hash(password, 10);
         userData.password = hashedPassword;
 
+        // Profile Image
+        if (req.file) {
+            userData.profileImage = req.file.filename;
+        }
+
         let userAdded = await UserModel.create(userData);
 
         return res.status(201).json({ msg: "Signup Successfully Done", userAdded });
 
     } catch (error) {
         console.log(error);
-        return res.status(500).json({msg: "Internal Server Error" })
+        return res.status(500).json({ msg: "Internal Server Error" })
     }
 }
 
@@ -164,7 +169,7 @@ const updateProfile = async (req, res) => {
 
         let userData = req.body;
 
-        if (!userData || Object.keys(userData).length === 0) {
+        if (!userData || Object.keys(userData).length === 0 && !req.file) {
             return res
                 .status(400)
                 .json({ msg: "Bad Request! Enter Data to Update." });
@@ -238,6 +243,11 @@ const updateProfile = async (req, res) => {
             }
         }
 
+        // Profile Image
+        if (req.file) {
+            userData.profileImage = req.file.filename
+        }
+
         let updatedUserProfile = await UserModel.findByIdAndUpdate(
             userId,
             userData,
@@ -255,62 +265,62 @@ const updateProfile = async (req, res) => {
 
 // Delete Profile
 const deleteProfile = async (req, res) => {
-  try {
-    let userId = req.userId;
+    try {
+        let userId = req.userId;
 
-    let deletedUserProfile = await UserModel.findByIdAndDelete(userId);
+        let deletedUserProfile = await UserModel.findByIdAndDelete(userId);
 
-    if (!deletedUserProfile) {
-      return res.status(404).json({ msg: "User Not Found Or Already Deleted" });
+        if (!deletedUserProfile) {
+            return res.status(404).json({ msg: "User Not Found Or Already Deleted" });
+        }
+
+        return res.status(200).json({ msg: "Profile Deleted" });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ msg: "Internal Server Error" });
     }
-
-    return res.status(200).json({ msg: "Profile Deleted" });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ msg: "Internal Server Error" });
-  }
 };
 
 // Get All Profiles (Admin)
 const getAllUsers = async (req, res) => {
-  try {
-    let users = await UserModel.find().select("-password");
+    try {
+        let users = await UserModel.find().select("-password");
 
-    if (users.length === 0) {
-      return res.status(404).json({ msg: "No Users Found" });
+        if (users.length === 0) {
+            return res.status(404).json({ msg: "No Users Found" });
+        }
+
+        return res.status(200).json({ msg: "Users Fetched Successfully", users });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ msg: "Internal Server Error" });
     }
-
-    return res.status(200).json({ msg: "Users Fetched Successfully", users });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ msg: "Internal Server Error" });
-  }
 };
 
 // Delete User (Admin)
 const deleteUser = async (req, res) => {
-  try {
-    let userId = req.params.id;
+    try {
+        let userId = req.params.id;
 
-    if (!isValidObjectId(userId)) {
-      return res.status(400).json({ msg: "Invalid Id" });
+        if (!isValidObjectId(userId)) {
+            return res.status(400).json({ msg: "Invalid Id" });
+        }
+
+        let user = await UserModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ msg: "User Not Found" });
+        }
+
+        if (user.role === "admin") {
+            return res.status(403).json({ msg: "Admin Cannot be deleted" });
+        }
+
+        await UserModel.findByIdAndDelete(userId);
+        return res.status(200).json({ msg: "User Deleted Successfully" });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ msg: "Internal Server Error" });
     }
-
-    let user = await UserModel.findById(userId);
-    if (!user) {
-      return res.status(404).json({ msg: "User Not Found" });
-    }
-
-    if (user.role === "admin") {
-      return res.status(403).json({ msg: "Admin Cannot be deleted" });
-    }
-
-    await UserModel.findByIdAndDelete(userId);
-    return res.status(200).json({ msg: "User Deleted Successfully" });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ msg: "Internal Server Error" });
-  }
 };
-    
+
 module.exports = { signupUser, loginUser, getProfile, updateProfile, deleteProfile, getAllUsers, deleteUser };

@@ -76,9 +76,13 @@ const addInterview = async (req, res) => {
   }
 };
 
-// Get All Interviews
+// Get All Interviews (search, filter, pagination)
 const getAllInterviews = async (req, res) => {
   try {
+
+
+    
+
     let interviews = await InterviewModel.find().populate("categoryId");
     if (interviews.length === 0) {
       return res.status(404).json({ msg: "No Interview Found" });
