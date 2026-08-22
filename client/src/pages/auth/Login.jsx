@@ -190,10 +190,14 @@ const Login = () => {
               {/* Login Button */}
               <button
                 type="submit"
+                disabled={loading}
                 className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 py-3.5 text-sm font-semibold transition hover:bg-indigo-500 active:scale-[0.99]"
               >
-                Sign In
-                <FiArrowRight className="transition-transform group-hover:translate-x-1" />
+                {loading ? "Signing In..." : "Sign In"}
+
+                {!loading && (
+                  <FiArrowRight className="transition-transform group-hover:translate-x-1" />
+                )}
               </button>
             </form>
 
